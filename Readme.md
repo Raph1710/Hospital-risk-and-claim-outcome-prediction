@@ -1,14 +1,11 @@
 # Synthetic dataset — Hospital Operations & Revenue Risk Intelligence
 
-**This is a synthetically generated dataset, not real hospital data and not a
-cleaned version of the original capstone data.** It was built specifically
+**These models were trained on a synthetically generated dataset.** It was built specifically
 for a portfolio project, with intentional, documented relationships between
 features and targets so that trained models reach ~90%+ accuracy honestly —
 i.e. the model is learning real (engineered) signal, not memorizing leaked
 information or an artifact of data cleaning.
 
-Put this note in your README/portfolio writeup. Transparency here is what
-makes the high accuracy legitimate to show off rather than misleading.
 
 ## What's real vs. engineered
 
@@ -83,19 +80,6 @@ results.**
 insurance_provider, department, chronic_flag` (explicitly excluding
 `approved_amount` / `payment_days`) → **~92% accuracy**.
 
-## Leakage note (worth including in your writeup — it's a good story)
-
-An earlier version of this generator derived `length_of_stay_hours` directly
-from the `risk_score` label (e.g. "High risk → ~34 hrs average"). That's
-structurally identical to the leakage problem already documented for
-`approved_amount` → `claim_status`: the "predictor" is just a noisy encoding
-of the answer. It was caught during model validation (accuracy looked
-plausible but the feature-importance breakdown showed LOS carrying ~72% of
-the signal, which is a leakage tell) and reworked so LOS shares the same
-underlying causes as risk_score instead of being generated from the label.
-Explicitly calling this out in an interview or writeup is a good way to
-demonstrate you understand leakage, not just that you can avoid it.
-
 ## Data-quality guarantees (by construction)
 
 - `registration_date <= visit_date <= billing_date` for every row
@@ -104,11 +88,3 @@ demonstrate you understand leakage, not just that you can avoid it.
 - No duplicate (`patient_id`, `visit_date`, `department`) visits
 - `payment_days` is only populated for `Paid` claims (null for Pending/Rejected)
 - No orphaned visits/billing records, no duplicate patient IDs
-
-## How to regenerate
-
-Run `generate_synthetic_data.py` (seeded, `np.random.default_rng(42)`, fully
-reproducible). Tune the noise levels documented inline (currently σ=0.24 for
-`risk_score`, σ=0.25 for the claim-status thresholds) if you want a different
-accuracy ceiling — lower noise = higher achievable accuracy, at the cost of
-looking less realistic.
