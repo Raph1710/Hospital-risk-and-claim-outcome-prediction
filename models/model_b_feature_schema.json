@@ -1,0 +1,40 @@
+{
+  "model": "B_claim_outcome_classification",
+  "target": "claim_status",
+  "numeric_features": [
+    "age",
+    "chronic_flag",
+    "length_of_stay_hours",
+    "billed_amount",
+    "billed_per_hour",
+    "above_avg_bill",
+    "visit_frequency",
+    "avg_los_per_patient",
+    "days_since_registration",
+    "provider_rejection_rate",
+    "visit_month",
+    "visit_quarter",
+    "visit_dayofweek",
+    "is_weekend",
+    "high_risk_flag"
+  ],
+  "categorical_features": [
+    "department",
+    "visit_type",
+    "gender",
+    "city",
+    "insurance_provider"
+  ],
+  "engineered_features": [
+    "billed_per_hour",
+    "above_avg_bill"
+  ],
+  "leakage_excluded": [
+    "approved_amount",
+    "payment_days",
+    "realization_ratio",
+    "is_zero_approved",
+    "payment_delay_band"
+  ],
+  "imbalance_strategy": "class_weight=balanced"
+}
