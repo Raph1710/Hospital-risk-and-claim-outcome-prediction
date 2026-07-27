@@ -1,90 +1,141 @@
-# Synthetic dataset — Hospital Operations & Revenue Risk Intelligence
+# Hospital Operations & Revenue Risk Intelligence Platform
 
-**These models were trained on a synthetically generated dataset.** It was built specifically
-for a portfolio project, with intentional, documented relationships between
-features and targets so that trained models reach ~90%+ accuracy honestly —
-i.e. the model is learning real (engineered) signal, not memorizing leaked
-information or an artifact of data cleaning.
+**Advanced Certificate Programme in Applied AI & Machine Learning — Healthcare Business Capstone**
 
+An end-to-end analytics and machine learning platform that turns fragmented hospital data into predictive intelligence — helping hospital leadership manage patient risk and helping finance teams cut revenue leakage from rejected or delayed insurance claims.
 
-## What's real vs. engineered
+---
 
-- **Schema and realistic value ranges** (ages, departments, insurance
-  providers, billing amounts, etc.) mirror a real hospital operations
-  dataset.
-- **All relationships between features and the two prediction targets
-  (`risk_score`, `claim_status`) are deliberately injected**, with random
-  noise layered in so the classes are not perfectly separable (a "too
-  perfect" 99–100% accuracy is usually a red flag; capping around 90–92%
-  with realistic error patterns is the more credible signal).
-- **No target leakage.** Every model below was trained and evaluated on
-  features that do NOT include a value that's mathematically derived from
-  the label itself (see the leakage note below — this was actually caught
-  and fixed mid-build).
+## Project Summary
 
-## Files
+Multi-specialty hospital networks lose money and efficiency to two recurring problems:
 
-| File | Rows | Notes |
-|---|---|---|
-| `patients_synthetic.csv` | 5,000 | same schema as original |
-| `visits_synthetic.csv` | ~24,960 | same schema + 1 new column, `vitals_abnormal_flag` |
-| `billing_synthetic.csv` | ~24,960 | same schema as original |
+1. **Operational risk** — clinical teams can't always tell in advance which visits will need the most attention.
+2. **Revenue leakage** — a large share of billed revenue never gets collected, due to claim rejections and payment delays.
 
-## Injected relationships
+This project builds a simulated hospital analytics stack — from raw data to a relational database, to exploratory analysis, to two deployed-ready ML classifiers — that gives hospital leadership a data-driven view of both problems.
 
-### `risk_score` (Low / Medium / High) — visits.csv
-Driven by a weighted combination of:
-- `chronic_flag` (chronic patients skew higher risk)
-- `age > 60`
-- `visit_type == 'ICU'`
-- `department` in `{ICU, Cardiology}`
-- `vitals_abnormal_flag` — **new column**, simulating a nurse triage flag
-  captured at admission (a realistic clinical signal a real EHR would
-  actually record)
-- Gaussian noise (σ=0.24) + 3% random label noise
+| | |
+|---|---|
+| **Patients** | 5,000 |
+| **Visits** | 25,000 |
+| **Billing records** | 25,000 |
+| **Cities** | Hyderabad, Pune, Chennai, Bangalore, Mumbai, Delhi |
+| **Departments** | Cardiology, Orthopedics, ICU, General, ER, Neurology |
+| **Insurance Providers** | SecureLife, HealthPlus, CareOne, MediCareX |
 
-`length_of_stay_hours` is generated from the **same underlying causal
-factors** as `risk_score` (chronic_flag, age, visit_type, department,
-vitals_abnormal_flag) plus its own independent noise — it is correlated with
-risk because they share real causes, but it is *not* derived from the
-`risk_score` label itself. (An earlier draft of this generator did derive LOS
-directly from the risk label — that's target leakage in disguise, the same
-mistake as using `approved_amount` to predict `claim_status`. It was caught
-and fixed; see "Leakage note" below.)
+> **Data note:** The dataset is synthetically generated (`numpy` RNG, seed=42) with documented, realistic relationships between clinical acuity, length of stay, and claim outcomes — built specifically so the modelling pipeline could be demonstrated end-to-end without relying on sensitive real patient data.
 
-**Validated result:** Random Forest, features = `age, chronic_flag,
-visit_type, department, length_of_stay_hours, vitals_abnormal_flag` →
-**~91% accuracy**, F1 0.87–0.94 across all three classes (no single class is
-trivially dominant).
+---
 
-### `claim_status` (Paid / Pending / Rejected) — billing.csv
-Generated as two sequential threshold decisions (mirroring how a real prior-
-auth / claims-adjudication rule engine might work):
-1. **Rejected** vs. not — driven by high `billed_amount` and insurance
-   provider (`CareOne`, `MediCareX` reject more often — a "stricter payer"
-   effect), thresholded at the 85th percentile (~15% Rejected, matching
-   real-world claim rejection rates).
-2. **Pending** vs. **Paid** (within non-rejected) — driven by
-   high-administrative-overhead departments (`ICU`, `ER`) and non-chronic
-   patients, thresholded at the 70th percentile of the remainder.
-3% random label noise on top of both steps.
+## Tech Stack
 
-`approved_amount` and `payment_days` are then derived **from** `claim_status`
-(Paid → full amount + a payment turnaround time; Rejected → 0 + no
-payment_days; Pending → partial amount + no payment_days yet). **These two
-columns are consequences of the claim outcome, not predictors of it — do not
-use them as model features for `claim_status`, or you'll get leakage-inflated
-results.**
+| Layer | Tools |
+|---|---|
+| **Database** | SQLite (`sqlite3`), relational schema with foreign keys, indexes |
+| **Data wrangling** | `pandas`, `numpy` |
+| **Visualization** | `matplotlib`, `seaborn` |
+| **Machine Learning** | `scikit-learn` (Logistic Regression, Random Forest), `XGBoost` |
+| **Model tuning** | `RandomizedSearchCV` |
+| **Explainability** | `SHAP`, built-in feature importances |
+| **Serialization** | `pickle`, `json`, `parquet` |
+| **Environment** | Jupyter Notebook |
 
-**Validated result:** Random Forest, features = `billed_amount,
-insurance_provider, department, chronic_flag` (explicitly excluding
-`approved_amount` / `payment_days`) → **~92% accuracy**.
+---
 
-## Data-quality guarantees (by construction)
+## Project Structure
 
-- `registration_date <= visit_date <= billing_date` for every row
-- `billing_date` always on/after the estimated discharge date
-  (`visit_date + ceil(length_of_stay_hours / 24)` days)
-- No duplicate (`patient_id`, `visit_date`, `department`) visits
-- `payment_days` is only populated for `Paid` claims (null for Pending/Rejected)
-- No orphaned visits/billing records, no duplicate patient IDs
+```
+├── Phase1.ipynb    → SQL Analytics Layer
+├── Phase2.ipynb    → Exploratory Data Analysis & Data Quality
+├── Phase3.ipynb    → Model Development (Model A + Model B)
+├── Phase4.ipynb    → Model Evaluation & Explainability
+├── hospital.db     → SQLite database (patients, visits, billing)
+├── merged_clean.parquet → Cleaned, joined modelling dataset
+├── models/         → Saved model pickles, feature schemas, metrics
+├── eda_plots/       → EDA charts
+├── model_plots/      → Model training/CM plots
+└── phase4_plots/      → Evaluation, fairness & SHAP plots
+```
+
+---
+
+## Phase 1 — SQL Analytics Layer
+
+**Goal:** turn raw CSVs into a trustworthy, query-ready relational database.
+
+- Designed and created a **SQLite schema** for `patients`, `visits`, and `billing`, with primary/foreign keys, `CHECK` constraints (e.g. valid age range, non-negative amounts), and cascading updates/deletes.
+- Added **11 indexes** across the three tables (on city, insurance provider, department, dates, risk score, claim status, etc.) to keep joins and filters fast.
+- Generated the **synthetic dataset** with intentional, documented signal — e.g. chronic-condition probability rising with age, risk score driven by acuity factors with a controlled 8% label-noise flip, and length-of-stay generated conditional on risk score — so downstream models would have genuine, learnable patterns.
+- Loaded all three CSVs into the database and validated integrity with joined sample queries.
+- Wrote reusable **business SQL queries**, split into two groups:
+  - **Operational Analysis:** visit volume by department, average length of stay, % high-risk visits by department, avg visits per patient by city, doctors handling the most high-risk visits.
+  - **Financial Analysis:** top insurance providers by billed amount, claim rejection rate by provider, average payment delay by provider, revenue realization ratio by department, and flagged cases of high billed / zero-approved amounts (a direct revenue-leakage signal).
+
+## Phase 2 — Exploratory Data Analysis & Data Quality
+
+**Goal:** understand the data deeply before modelling, and confirm it's decision-ready.
+
+- Merged patients → visits → billing into one analysis-ready DataFrame.
+- **Distribution analysis** across all numeric and categorical fields (age, length of stay, billed/approved amounts, payment days, department, risk score, claim status, etc.).
+- **Outlier detection** using the IQR method — reviewed and consciously **retained** all outliers, since extreme length-of-stay and billed amounts reflect real ICU/high-cost cases rather than data errors.
+- **Business insight generation:**
+  - Department performance (visits, avg LOS, % high risk, avg billed, avg leakage)
+  - Insurance provider behaviour (approval rate, avg payment delay)
+  - Overall **revenue realization** — total billed vs. approved vs. leakage
+  - Chronic vs. non-chronic patient profiles
+- **Correlation & bivariate analysis** — correlation heatmap across engineered numeric features, plus risk-score and claim-status relationships against length of stay, billed amount, payment days, department, and insurance provider (via boxplots and cross-tab heatmaps).
+- Closed with a **modelling readiness summary**: final feature sets and leakage-safe target definitions for both upcoming models.
+
+## Phase 3 — Model Development (Classification Systems)
+
+Two classification models, each trained as **baseline → advanced → tuned**, with a strict **time-based train/test split** (80/20 by date, not random) to simulate realistic deployment and avoid future-data leakage.
+
+### Model A — Visit Risk Classification
+Predicts whether a visit is **Low / Medium / High** risk *before* clinical outcomes are known.
+- **Baseline:** Logistic Regression
+- **Advanced/main model:** XGBoost (`multi:softprob`, 500 estimators)
+- **Tuning:** `RandomizedSearchCV` (30 iterations, 3-fold CV, `f1_weighted`)
+- Carefully excluded all **post-visit fields** (billed amount, claim status, payment days, etc.) from the feature set to prevent leakage — only pre-visit and clinical/demographic features are used.
+- Feature importance analysis on the tuned model.
+
+### Model B — Claim Outcome Classification
+Predicts whether a claim will be **Paid / Pending / Rejected**.
+- **Baseline:** Logistic Regression (`class_weight="balanced"`)
+- **Advanced:** Random Forest (`class_weight="balanced_subsample"`)
+- **Tuning:** `RandomizedSearchCV` on estimators, depth, split/leaf sizes, and max features, scored on `balanced_accuracy`
+- **Imbalance handling:** monitored F1 for the minority "Rejected" class and built in an automatic recommendation to apply **SMOTE** if F1 fell below 0.50.
+- Feature importance analysis on the tuned Random Forest.
+
+All models and their feature schemas are saved to `models/` (`.pkl` + `.json`) for reuse in Phase 4 and future deployment.
+
+## Phase 4 — Model Evaluation & Explainability
+
+**Goal:** confirm both models are not just accurate, but reliable, interpretable, and fair enough for healthcare use.
+
+- **Business-relevant metrics**, not just accuracy — recall, precision, and F1 specifically for the **High Risk** class (Model A) and the **Rejected** class (Model B), since missing these is the costliest failure mode in each case.
+- **Train vs. test confusion matrices** side by side, with accuracy and balanced accuracy, to explicitly check the train/test performance gap for overfitting.
+- **Feature importance** plots for both models.
+- **Fairness segmentation** — recall for the high-stakes class recomputed across **gender, insurance provider, and city**, to check the models don't perform unevenly across demographic groups.
+- **SHAP explainability** — mean absolute SHAP values to show which features drive each model's predictions, with a graceful fallback to built-in feature importances if SHAP isn't available.
+- All final metrics consolidated into `phase4_metrics.json` for reporting.
+
+---
+
+## Roadmap (Capstone Phases Ahead)
+
+| Phase | Status |
+|---|---|
+| 1. SQL Analytics Layer | Complete |
+| 2. EDA & Data Quality | Complete |
+| 3. Model Development | Complete |
+| 4. Model Evaluation & Explainability | Complete |
+| 5. Monitoring, Drift Detection & Governance | Planned |
+
+---
+
+## Key Takeaways So Far
+
+- Built a **leakage-safe** modelling pipeline validated with time-based splitting.
+- Quantified **revenue leakage** and claim rejection drivers at the department and insurance-provider level.
+- Delivered two production-candidate classifiers with documented feature schemas, tuning results, and fairness checks — ready for the deployment phase.
