@@ -1,0 +1,22 @@
+{
+  "model_a": {
+    "train_accuracy": 0.8403,
+    "test_accuracy": 0.8498,
+    "train_balanced_accuracy": 0.8439,
+    "test_balanced_accuracy": 0.8511,
+    "high_risk_recall": 0.9373,
+    "high_risk_precision": 0.8288,
+    "high_risk_f1": 0.8797,
+    "train_test_gap": -0.0095
+  },
+  "model_b": {
+    "train_accuracy": 0.8384,
+    "test_accuracy": 0.8216,
+    "train_balanced_accuracy": 0.8475,
+    "test_balanced_accuracy": 0.8268,
+    "rejected_recall": 0.8672,
+    "rejected_precision": 0.4823,
+    "rejected_f1": 0.6198,
+    "train_test_gap": 0.0168
+  }
+}
