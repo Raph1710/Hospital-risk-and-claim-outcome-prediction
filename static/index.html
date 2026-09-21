@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Clinical &amp; Claims Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ================= APP HEADER ================= -->
+  <header class="app-header">
+    <div class="top-bar">
+      <div class="brand-wrapper">
+        <div class="brand-icon-box">
+          <svg class="ui-icon md" viewBox="0 0 24 24">
+            <path d="M12 4v16m-8-8h16"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>
+            Hospital Clinical &amp; Claims Intelligence
+            <span class="env-tag">Dual Engine</span>
+          </h1>
+          <p>Clinical Acuity Risk Stratification (Model A) &amp; Denial Revenue Mitigation (Model B)</p>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <div class="meta-pill">
+          <span id="system-status-text">FastAPI v1.0 • Connected</span>
+        </div>
+        <div class="meta-pill">
+          <svg class="ui-icon sm" style="color: var(--accent-blue);" viewBox="0 0 24 24">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+          <span>24,961 Cohort Encounters</span>
+        </div>
+        <a href="/docs" target="_blank" class="docs-link-btn" id="header-docs-link">
+          <svg class="ui-icon sm" viewBox="0 0 24 24">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          API Docs ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation Bar (Flush) -->
+    <nav class="tab-navigation-bar" role="tablist">
+      <button class="nav-tab-btn active" data-tab="tab-metrics" id="tab-btn-metrics">
+        <svg class="ui-icon sm" viewBox="0 0 24 24">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        Validation &amp; Benchmarks
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-dataset" id="tab-btn-dataset">
+        <svg class="ui-icon sm" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="3" y1="15" x2="21" y2="15"/>
+          <line x1="9" y1="3" x2="9" y2="21"/>
+        </svg>
+        Cohort Workbench
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-simulator" id="tab-btn-simulator">
+        <svg class="ui-icon sm" viewBox="0 0 24 24">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Clinical &amp; Billing Simulator
+      </button>
+      <button class="nav-tab-btn" data-tab="tab-audit" id="tab-btn-audit">
+        <svg class="ui-icon sm" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+        </svg>
+        Audit Log &amp; Specifications
+      </button>
+    </nav>
+  </header>
+
+  <!-- ================= MAIN WORKBENCH ================= -->
+  <main class="app-container">
+
+    <!-- ================= TAB 1: VALIDATION & BENCHMARKS ================= -->
+    <section id="tab-metrics" class="tab-pane active">
+      <div class="workbench-header">
+        <div>
+          <h2 class="workbench-title">Validation Benchmarks &amp; Safety Guardrails</h2>
+          <p class="workbench-desc">Phase 4 out-of-time chronological validation results, confusion matrices, and fairness segmentation across 4,992 test encounters.</p>
+        </div>
+      </div>
+
+      <!-- Continuous Metrics Ribbon -->
+      <div class="metrics-ribbon">
+        <div class="metric-segment">
+          <div class="metric-segment-label">
+            <span>Model A • Risk Accuracy</span>
+            <span class="status-tag neutral">Test Split</span>
+          </div>
+          <div class="metric-segment-value" id="kpi-model-a-acc">84.98%</div>
+          <div class="metric-segment-footer">
+            <span>Balanced: 85.11%</span>
+            <span style="color: var(--text-muted);">| Train: 84.03%</span>
+          </div>
+        </div>
+
+        <div class="metric-segment">
+          <div class="metric-segment-label">
+            <span>Model A • High-Risk Recall</span>
+            <span class="status-tag low">Safety Guardrail</span>
+          </div>
+          <div class="metric-segment-value" style="color: var(--tag-success-text);" id="kpi-model-a-recall">93.73%</div>
+          <div class="metric-segment-footer">
+            <span>Precision: 82.88% | F1: 87.97%</span>
+          </div>
+        </div>
+
+        <div class="metric-segment">
+          <div class="metric-segment-label">
+            <span>Model B • Claim Accuracy</span>
+            <span class="status-tag neutral">Class Weighted</span>
+          </div>
+          <div class="metric-segment-value" id="kpi-model-b-acc">82.16%</div>
+          <div class="metric-segment-footer">
+            <span>Balanced: 82.68%</span>
+            <span style="color: var(--text-muted);">| Train: 83.84%</span>
+          </div>
+        </div>
+
+        <div class="metric-segment">
+          <div class="metric-segment-label">
+            <span>Model B • Denial Capture</span>
+            <span class="status-tag low">Leakage Prevention</span>
+          </div>
+          <div class="metric-segment-value" style="color: var(--tag-success-text);" id="kpi-model-b-recall">86.72%</div>
+          <div class="metric-segment-footer">
+            <span>Captures 653/768 denials</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dual Model Panels (Side by Side) -->
+      <div class="panel-grid-2">
+        <!-- Model A Panel -->
+        <div class="workbench-panel">
+          <div class="panel-header-bar">
+            <span class="panel-header-title">
+              <svg class="ui-icon sm" style="color: var(--accent-blue);" viewBox="0 0 24 24">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              Model A: Tuned XGBoost Risk Classifier
+            </span>
+            <span class="panel-tag">Multi-Class (Low, Med, High)</span>
+          </div>
+          <div class="panel-body">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+              Out-of-Time Test Confusion Matrix (n = 4,992)
+            </div>
+            <div class="master-table-wrapper" style="margin-bottom: 16px;" id="model-a-cm-container">
+              <!-- Rendered by JS -->
+            </div>
+
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+              Top Predictive Feature Weights (Gain)
+            </div>
+            <div id="model-a-features-list">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Model B Panel -->
+        <div class="workbench-panel">
+          <div class="panel-header-bar">
+            <span class="panel-header-title">
+              <svg class="ui-icon sm" style="color: var(--accent-indigo);" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Model B: Balanced Random Forest Claim Classifier
+            </span>
+            <span class="panel-tag">Ternary (Paid, Pending, Rejected)</span>
+          </div>
+          <div class="panel-body">
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+              Out-of-Time Test Confusion Matrix (n = 4,992)
+            </div>
+            <div class="master-table-wrapper" style="margin-bottom: 16px;" id="model-b-cm-container">
+              <!-- Rendered by JS -->
+            </div>
+
+            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+              Top Predictive Feature Weights (Gini)
+            </div>
+            <div id="model-b-features-list">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fairness Segmentation Panel -->
+      <div class="workbench-panel">
+        <div class="panel-header-bar">
+          <span class="panel-header-title">
+            <svg class="ui-icon sm" viewBox="0 0 24 24">
+              <path d="M3 6h18M12 3v18M19 6l2 7a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2l2-7zM5 6l2 7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2l2-7z"/>
+            </svg>
+            Demographic &amp; Carrier Fairness Audit
+          </span>
+          <span class="panel-tag">Parity Verification</span>
+        </div>
+        <div class="master-table-wrapper">
+          <table class="dense-table" id="fairness-table">
+            <thead>
+              <tr>
+                <th>Protected Category</th>
+                <th>Subgroup Cohort</th>
+                <th>Model A High-Risk Recall</th>
+                <th>Model B Denial Capture</th>
+                <th>Parity Audit Status</th>
+              </tr>
+            </thead>
+            <tbody id="fairness-table-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= TAB 2: COHORT WORKBENCH (MASTER-DETAIL SPLIT) ================= -->
+    <section id="tab-dataset" class="tab-pane">
+      <div class="workbench-header">
+        <div>
+          <h2 class="workbench-title">Stratified Cohort Workbench</h2>
+          <p class="workbench-desc">100 representative hospital encounters across all departments and payer tiers with live dual-model inferences. Click any row to inspect details in the right pane.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-ctrl primary" id="btn-run-batch-eval">
+            <svg class="ui-icon sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Run Batch Evaluation
+          </button>
+          <button class="btn-ctrl" id="btn-generate-samples">
+            <svg class="ui-icon sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Generate Fresh Sample
+          </button>
+        </div>
+      </div>
+
+      <!-- Master-Detail Split Grid -->
+      <div class="master-detail-split">
+        <!-- Master Panel (Left) -->
+        <div class="workbench-panel">
+          <div class="filter-toolbar">
+            <div class="toolbar-left">
+              <div class="search-field">
+                <span class="search-icon">
+                  <svg class="ui-icon sm" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </span>
+                <input type="text" id="dataset-search-input" placeholder="Filter ID, city, dept...">
+              </div>
+
+              <select id="filter-department" class="filter-drop">
+                <option value="All">All Departments (6)</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="ER">ER</option>
+                <option value="ICU">ICU</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="General">General</option>
+              </select>
+
+              <select id="filter-risk" class="filter-drop">
+                <option value="All">All Risk Tiers</option>
+                <option value="Low">Low Risk</option>
+                <option value="Medium">Medium Risk</option>
+                <option value="High">High Risk</option>
+              </select>
+
+              <select id="filter-claim" class="filter-drop">
+                <option value="All">All Claim Outcomes</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+
+              <button class="btn-ctrl" id="btn-reset-filters" title="Reset Filters">
+                <svg class="ui-icon sm" viewBox="0 0 24 24">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </button>
+            </div>
+
+            <div style="font-size: 0.72rem; color: var(--text-muted);" id="pagination-summary">
+              Showing 1-20 of 100
+            </div>
+          </div>
+
+          <div class="master-table-wrapper">
+            <table class="dense-table" id="sample-dataset-table">
+              <thead>
+                <tr>
+                  <th>Patient ID</th>
+                  <th>Visit ID</th>
+                  <th>Age/Sex</th>
+                  <th>City</th>
+                  <th>Dept</th>
+                  <th>Stay</th>
+                  <th>Actual Risk</th>
+                  <th>Model A Pred</th>
+                  <th>Billed ($)</th>
+                  <th>Payer</th>
+                  <th>Actual Claim</th>
+                  <th>Model B Pred</th>
+                </tr>
+              </thead>
+              <tbody id="sample-dataset-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination-bar">
+            <span>Page navigation</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn-ctrl" id="btn-page-prev">← Prev</button>
+              <button class="btn-ctrl" id="btn-page-next">Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docked Detail Inspector (Right Pane) -->
+        <aside class="docked-inspector" id="docked-inspector-pane">
+          <div class="panel-header-bar">
+            <span class="panel-header-title">
+              <svg class="ui-icon sm" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span id="inspector-encounter-title">Encounter Detail</span>
+            </span>
+            <span class="panel-tag" id="inspector-patient-tag">PATIENT</span>
+          </div>
+
+          <!-- Section 1: Patient Clinical Summary -->
+          <div class="inspector-section">
+            <div class="inspector-sec-title">Clinical Profile</div>
+            <div class="detail-key-val">
+              <span class="detail-key">Demographics:</span>
+              <span class="detail-val" id="insp-demographics">--</span>
+            </div>
+            <div class="detail-key-val">
+              <span class="detail-key">Department &amp; Type:</span>
+              <span class="detail-val" id="insp-dept-type">--</span>
+            </div>
+            <div class="detail-key-val">
+              <span class="detail-key">Length of Stay:</span>
+              <span class="detail-val" id="insp-stay">--</span>
+            </div>
+            <div class="detail-key-val">
+              <span class="detail-key">Chronic Comorbidity:</span>
+              <span class="detail-val" id="insp-chronic">--</span>
+            </div>
+          </div>
+
+          <!-- Section 2: Model A Evaluation -->
+          <div class="inspector-section">
+            <div class="inspector-sec-title" style="display: flex; justify-content: space-between;">
+              <span>Model A: Visit Risk</span>
+              <span id="insp-risk-tag" class="status-tag neutral">--</span>
+            </div>
+            <div class="detail-key-val" style="margin-bottom: 8px;">
+              <span class="detail-key">Ground Truth vs Predicted:</span>
+              <span class="detail-val" id="insp-risk-compare">--</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">High</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill danger" id="insp-bar-risk-high" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-risk-high">0%</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">Medium</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill warning" id="insp-bar-risk-med" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-risk-med">0%</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">Low</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill success" id="insp-bar-risk-low" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-risk-low">0%</span>
+            </div>
+          </div>
+
+          <!-- Section 3: Financial & Model B Claim Outcome -->
+          <div class="inspector-section">
+            <div class="inspector-sec-title" style="display: flex; justify-content: space-between;">
+              <span>Model B: Claim Outcome</span>
+              <span id="insp-claim-tag" class="status-tag neutral">--</span>
+            </div>
+            <div class="detail-key-val">
+              <span class="detail-key">Payer &amp; Billed Amount:</span>
+              <span class="detail-val" id="insp-bill-payer">--</span>
+            </div>
+            <div class="detail-key-val" style="margin-bottom: 8px;">
+              <span class="detail-key">Ground Truth vs Predicted:</span>
+              <span class="detail-val" id="insp-claim-compare">--</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">Paid</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill success" id="insp-bar-claim-paid" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-claim-paid">0%</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">Pending</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill warning" id="insp-bar-claim-pending" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-claim-pending">0%</span>
+            </div>
+            <div class="prob-meter-row">
+              <span class="prob-meter-label">Rejected</span>
+              <div class="prob-meter-track"><div class="prob-meter-fill danger" id="insp-bar-claim-rejected" style="width: 0%;"></div></div>
+              <span class="prob-meter-pct" id="insp-pct-claim-rejected">0%</span>
+            </div>
+          </div>
+
+          <!-- Section 4: Action Toolbar -->
+          <div class="inspector-section" style="display: flex; justify-content: flex-end;">
+            <button class="btn-ctrl primary" style="width: 100%; justify-content: center;" id="btn-inspector-load-sim">
+              <svg class="ui-icon sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Load into Simulator
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+
+    <!-- ================= TAB 3: CLINICAL & BILLING SIMULATOR ================= -->
+    <section id="tab-simulator" class="tab-pane">
+      <div class="workbench-header">
+        <div>
+          <h2 class="workbench-title">Clinical &amp; Billing Inference Simulator</h2>
+          <p class="workbench-desc">Input custom admission attributes or select a clinical preset to trigger simultaneous real-time inference on Model A (Risk) and Model B (Claim Denial).</p>
+        </div>
+      </div>
+
+      <!-- Segmented Presets Bar -->
+      <div class="segmented-presets-bar">
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); align-self: center; padding: 0 8px;">PRESETS:</span>
+        <button class="preset-segment-btn" id="preset-icu-cardiac">
+          <svg class="ui-icon sm" style="color: var(--tag-danger-text);" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          ICU Chronic Cardiac
+        </button>
+        <button class="preset-segment-btn" id="preset-outpatient">
+          <svg class="ui-icon sm" style="color: var(--tag-success-text);" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Routine Outpatient
+        </button>
+        <button class="preset-segment-btn" id="preset-emergency-trauma">
+          <svg class="ui-icon sm" style="color: var(--tag-warning-text);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Emergency Trauma (High Bill)
+        </button>
+        <button class="preset-segment-btn" id="preset-high-denial">
+          <svg class="ui-icon sm" style="color: var(--tag-danger-text);" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          High Denial Risk Carrier
+        </button>
+      </div>
+
+      <div class="panel-grid-2">
+        <!-- Input Form Panel -->
+        <div class="workbench-panel">
+          <div class="panel-header-bar">
+            <span class="panel-header-title">
+              <svg class="ui-icon sm" viewBox="0 0 24 24">
+                <line x1="4" y1="21" x2="4" y2="14"/>
+                <line x1="4" y1="10" x2="4" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12" y2="3"/>
+                <line x1="20" y1="21" x2="20" y2="16"/>
+                <line x1="20" y1="12" x2="20" y2="3"/>
+              </svg>
+              Encounter Parameters
+            </span>
+            <span class="panel-tag">Input Features</span>
+          </div>
+          <div class="panel-body">
+            <form id="simulator-form" class="form-grid-enterprise">
+              <div class="form-field">
+                <label for="sim-age">Patient Age</label>
+                <input type="number" id="sim-age" min="0" max="120" value="68" required>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-gender">Gender</label>
+                <select id="sim-gender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-city">Location / City</label>
+                <select id="sim-city">
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Pune">Pune</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-department">Department</label>
+                <select id="sim-department">
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="ICU">ICU</option>
+                  <option value="ER">ER</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Orthopedics">Orthopedics</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-visittype">Visit Setting</label>
+                <select id="sim-visittype">
+                  <option value="ICU">ICU Admission</option>
+                  <option value="ER">Emergency Room</option>
+                  <option value="OPD">Outpatient (OPD)</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-stay">Length of Stay (Hours)</label>
+                <input type="number" step="0.5" id="sim-stay" min="1" max="1000" value="96" required>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-chronic">Chronic Comorbidity</label>
+                <select id="sim-chronic">
+                  <option value="1">Present (Flag = 1)</option>
+                  <option value="0">None (Flag = 0)</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="sim-provider">Insurance Carrier</label>
+                <select id="sim-provider">
+                  <option value="CareOne">CareOne (Hist. Rejection: 30.3%)</option>
+                  <option value="MediCareX">MediCareX (Hist. Rejection: 29.3%)</option>
+                  <option value="HealthPlus">HealthPlus (Hist. Rejection: 1.45%)</option>
+                  <option value="SecureLife">SecureLife (Hist. Rejection: 1.04%)</option>
+                </select>
+              </div>
+
+              <div class="form-field full">
+                <label for="sim-bill">Billed Amount ($ USD)</label>
+                <input type="number" step="100" id="sim-bill" min="100" max="500000" value="85000" required>
+                <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">Institution Average Reference: $24,711.37</span>
+              </div>
+
+              <div class="form-field full" style="margin-top: 6px; display: flex; gap: 8px;">
+                <button type="submit" class="btn-ctrl primary" style="flex: 1; justify-content: center; padding: 9px;" id="btn-run-simulation">
+                  <svg class="ui-icon sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Execute Inferences
+                </button>
+                <button type="button" class="btn-ctrl" id="btn-clear-sim">
+                  Reset
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Decision Output Console -->
+        <div class="workbench-panel">
+          <div class="panel-header-bar">
+            <span class="panel-header-title">
+              <svg class="ui-icon sm" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 14 14"/>
+              </svg>
+              Dual Decision Output Console
+            </span>
+            <span class="panel-tag" id="sim-latency-badge">Latency: --</span>
+          </div>
+          <div class="panel-body">
+            <!-- Model A Assessment -->
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.8rem; font-weight: 700;">Model A: Visit Risk Stratification</span>
+                <span class="status-tag high" id="badge-sim-risk">High Risk</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">High</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill danger" id="bar-risk-high" style="width: 94.2%;"></div></div>
+                <span class="prob-meter-pct" id="pct-risk-high">94.2%</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">Medium</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill warning" id="bar-risk-med" style="width: 4.8%;"></div></div>
+                <span class="prob-meter-pct" id="pct-risk-med">4.8%</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">Low</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill success" id="bar-risk-low" style="width: 1.0%;"></div></div>
+                <span class="prob-meter-pct" id="pct-risk-low">1.0%</span>
+              </div>
+
+              <div class="output-protocol-box danger" id="rec-box-risk">
+                <strong style="color: var(--text-primary);">Clinical Triage Protocol:</strong>
+                <ul id="rec-list-risk">
+                  <li>Priority Critical Care Review: Specialist review required.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Model B Assessment -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.8rem; font-weight: 700;">Model B: Claim Denial &amp; Revenue Leakage</span>
+                <span class="status-tag rejected" id="badge-sim-claim">Rejected (Denied)</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">Paid</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill success" id="bar-claim-paid" style="width: 12.0%;"></div></div>
+                <span class="prob-meter-pct" id="pct-claim-paid">12.0%</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">Pending</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill warning" id="bar-claim-pending" style="width: 9.5%;"></div></div>
+                <span class="prob-meter-pct" id="pct-claim-pending">9.5%</span>
+              </div>
+              <div class="prob-meter-row">
+                <span class="prob-meter-label">Rejected</span>
+                <div class="prob-meter-track"><div class="prob-meter-fill danger" id="bar-claim-rejected" style="width: 78.5%;"></div></div>
+                <span class="prob-meter-pct" id="pct-claim-rejected">78.5%</span>
+              </div>
+
+              <div class="output-protocol-box danger" id="rec-box-claim">
+                <strong style="color: var(--text-primary);">Billing &amp; Revenue Compliance Protocol:</strong>
+                <ul id="rec-list-claim">
+                  <li>Pre-submission scrub required: High historical denial rate on carrier.</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= TAB 4: AUDIT LOG & SPECIFICATIONS ================= -->
+    <section id="tab-audit" class="tab-pane">
+      <div class="workbench-header">
+        <div>
+          <h2 class="workbench-title">Inference Audit Trail &amp; API Specifications</h2>
+          <p class="workbench-desc">Real-time telemetry of recent model execution transactions with payload summaries, execution latencies, and OpenAPI endpoints.</p>
+        </div>
+        <button class="btn-ctrl" id="btn-refresh-logs">
+          <svg class="ui-icon sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh Audit Log
+        </button>
+      </div>
+
+      <div class="audit-table-wrapper">
+        <table class="dense-table" id="audit-table">
+          <thead>
+            <tr>
+              <th>Timestamp (UTC)</th>
+              <th>Endpoint</th>
+              <th>Encounter Input Summary</th>
+              <th>Predicted Output</th>
+              <th>Latency</th>
+            </tr>
+          </thead>
+          <tbody id="audit-logs-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- API Specifications Table -->
+      <div class="workbench-panel">
+        <div class="panel-header-bar">
+          <span class="panel-header-title">
+            <svg class="ui-icon sm" viewBox="0 0 24 24">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+            Supported REST Endpoints
+          </span>
+          <a href="/docs" target="_blank" class="docs-link-btn">Interactive Swagger UI ↗</a>
+        </div>
+        <div class="master-table-wrapper">
+          <table class="dense-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+                <th>Payload Schema</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="status-tag neutral" style="font-family: var(--font-mono); color: var(--accent-blue);">POST</span></td>
+                <td style="font-family: var(--font-mono); font-weight: 700;">/api/predict/risk</td>
+                <td>Model A XGBoost inference on patient admission features. Returns class probabilities and triaging flags.</td>
+                <td style="font-family: var(--font-mono); color: var(--text-muted);">RiskPredictionRequest</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag neutral" style="font-family: var(--font-mono); color: var(--accent-blue);">POST</span></td>
+                <td style="font-family: var(--font-mono); font-weight: 700;">/api/predict/claim</td>
+                <td>Model B Random Forest inference on financial features. Returns denial risk and revenue leakage warnings.</td>
+                <td style="font-family: var(--font-mono); color: var(--text-muted);">ClaimPredictionRequest</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag neutral" style="font-family: var(--font-mono); color: var(--accent-blue);">POST</span></td>
+                <td style="font-family: var(--font-mono); font-weight: 700;">/api/predict/batch</td>
+                <td>Dual-model batch evaluation returning real-time confusion matrices and live accuracy.</td>
+                <td style="font-family: var(--font-mono); color: var(--text-muted);">BatchPredictionRequest</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag neutral" style="font-family: var(--font-mono); color: var(--tag-success-text);">GET</span></td>
+                <td style="font-family: var(--font-mono); font-weight: 700;">/api/dataset</td>
+                <td>Paginated cohort browser with search, department, risk score, and claim status filters.</td>
+                <td style="font-family: var(--font-mono); color: var(--text-muted);">QueryParams (?limit=&amp;offset=)</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag neutral" style="font-family: var(--font-mono); color: var(--tag-success-text);">GET</span></td>
+                <td style="font-family: var(--font-mono); font-weight: 700;">/api/metrics</td>
+                <td>Phase 4 validation metrics, train/test confusion matrices, and fairness audits.</td>
+                <td style="font-family: var(--font-mono); color: var(--text-muted);">None</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: BATCH EVALUATION RESULTS ================= -->
+  <div class="modal-overlay" id="batch-modal">
+    <div class="modal-dialog">
+      <div class="modal-dialog-header">
+        <span class="panel-header-title">
+          <svg class="ui-icon sm" style="color: var(--accent-blue);" viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          Batch Evaluation Summary
+        </span>
+        <button class="btn-ctrl" style="padding: 2px 8px;" id="btn-close-batch-modal">✕</button>
+      </div>
+      <div class="panel-body" id="batch-modal-content">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App Script -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

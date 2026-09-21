@@ -120,9 +120,24 @@ All models and their feature schemas are saved to `models/` (`.pkl` + `.json`) f
 - **SHAP explainability** — mean absolute SHAP values to show which features drive each model's predictions, with a graceful fallback to built-in feature importances if SHAP isn't available.
 - All final metrics consolidated into `phase4_metrics.json` for reporting.
 
+## Phase 5 — Full-Stack Platform & FastAPI Service
+
+**Goal:** Productionize Model A (XGBoost Risk Stratifier) and Model B (Random Forest Claim Classifier) through an enterprise FastAPI service and interactive master-detail analytics dashboard.
+
+- **FastAPI Backend (`api/main.py`)**: High-performance REST endpoints (`/api/predict/risk`, `/api/predict/claim`, `/api/predict/batch`, `/api/dataset`, `/api/metrics`, `/api/logs`) with automated feature derivation and audit logging.
+- **Enterprise Web Dashboard (`static/`)**:
+  - **Validation & Benchmarks**: Live KPI metrics ribbon, test confusion matrices, feature weights, and demographic/payer parity audit.
+  - **Cohort Master-Detail Workbench**: Dense grid with live filtering across 100 representative hospital visits and docked encounter inspector pane.
+  - **Clinical & Billing Simulator**: Instant presets for ICU Cardiac, Routine Outpatient, Emergency Trauma, and High Denial Payer cases with real-time risk triage and denial prevention guidance.
+- **Quickstart**:
+  ```powershell
+  python run_server.py
+  ```
+  Access dashboard at `http://127.0.0.1:8000/` and interactive Swagger docs at `http://127.0.0.1:8000/docs`.
+
 ---
 
-## Roadmap (Capstone Phases Ahead)
+## Roadmap (Capstone Phases)
 
 | Phase | Status |
 |---|---|
@@ -130,12 +145,14 @@ All models and their feature schemas are saved to `models/` (`.pkl` + `.json`) f
 | 2. EDA & Data Quality | Complete |
 | 3. Model Development | Complete |
 | 4. Model Evaluation & Explainability | Complete |
-| 5. Monitoring, Drift Detection & Governance | Planned |
+| 5. Full-Stack Platform & FastAPI Service | Complete |
+| 6. Monitoring, Drift Detection & Governance | Planned |
 
 ---
 
-## Key Takeaways So Far
+## Key Takeaways
 
 - Built a **leakage-safe** modelling pipeline validated with time-based splitting.
 - Quantified **revenue leakage** and claim rejection drivers at the department and insurance-provider level.
-- Delivered two production-candidate classifiers with documented feature schemas, tuning results, and fairness checks — ready for the deployment phase.
+- Delivered two production-candidate classifiers with documented feature schemas, tuning results, and fairness checks.
+- Deployed a full-stack clinical intelligence workbench and REST API for real-time inference and cohort exploration.

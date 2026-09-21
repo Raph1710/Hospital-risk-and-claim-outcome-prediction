@@ -1,0 +1,13 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+
+# Environments & IDEs
+.vscode/
+.idea/
+.env
