@@ -4,6 +4,8 @@
 
 An end-to-end analytics and machine learning platform that turns fragmented hospital data into predictive intelligence — helping hospital leadership manage patient risk and helping finance teams cut revenue leakage from rejected or delayed insurance claims.
 
+> 🎥 **Demo Video:** [Watch the Platform Walkthrough on Google Drive](https://drive.google.com/file/d/1p01Uj3XaCfU4CJJTgAnp2KqGRjMh5cGO/view?usp=sharing)
+
 ---
 
 ## Project Summary
@@ -134,6 +136,7 @@ All models and their feature schemas are saved to `models/` (`.pkl` + `.json`) f
   python run_server.py
   ```
   Access dashboard at `http://127.0.0.1:8000/` and interactive Swagger docs at `http://127.0.0.1:8000/docs`.
+- **Demo Video Walkthrough**: [Watch Full Platform Demonstration](https://drive.google.com/file/d/1p01Uj3XaCfU4CJJTgAnp2KqGRjMh5cGO/view?usp=sharing)
 
 ---
 
